@@ -2,8 +2,11 @@ from pyboy import PyBoy
 from constants import Action, ACTION_MAP
 
 class PyBoyWrapper:
-    def __init__(self, rom_path, frame_skip = 4):
+    def __init__(self, rom_path, debug=False, frame_skip=4):
         self.pyboy = PyBoy(rom_path)
+        self.debug = debug
+        if not self.debug:
+            self.pyboy.set_emulation_speed(0)
         self.frame_skip = frame_skip
 
     def tick(self, frames=1):
