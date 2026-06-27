@@ -4,7 +4,7 @@ env = PokemonEnv('roms/Pokemon_Red.gb', debug=True, frame_skip=4)
 
 obs, info = env.reset()
 
-for _ in range(1000):
+for _ in range(50):
 
     action = env.action_space.sample()
 

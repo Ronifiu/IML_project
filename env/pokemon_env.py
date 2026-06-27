@@ -26,7 +26,7 @@ class PokemonEnv(gym.Env):
 
         self.emulator.reset()
         self.steps = 0
-        obs = np.array(self.emulator.get_screen())
+        obs = self.get_observation()
 
         return obs, {}
 
@@ -34,7 +34,7 @@ class PokemonEnv(gym.Env):
         action = Action(action)
 
         self.emulator.step(action)
-        obs = np.array(self.emulator.get_screen())
+        obs = self.get_observation()
 
         reward = 0
         self.steps += 1
@@ -53,3 +53,19 @@ class PokemonEnv(gym.Env):
 
     def get_observation(self):
         return np.array(self.emulator.get_screen())
+    
+    def get_player_position(self):
+        x, y = self.emulator.get_player_position()
+        return (x, y)
+    
+    def get_mapID(self):
+        map_id = self.emulator.get_mapID()
+        return map_id
+    
+    def get_current_health(self):
+        health = self.emulator.get_current_health()
+        return health
+    
+    def get_battle_state(self):
+        battle_state = self.emulator.get_battle_state()
+        return battle_state

@@ -47,3 +47,20 @@ class PyBoyWrapper:
     
     def close(self):
         self.pyboy.stop(save=False)
+
+    def get_player_position(self):
+        player_x = self.pyboy.memory[0xD362]
+        player_y = self.pyboy.memory[0xD361]
+        return player_x, player_y
+
+    def get_mapID(self):
+        map_id = self.pyboy.memory[0xD35E]
+        return map_id
+
+    def get_current_health(self):
+        health = self.pyboy.memory[0xD163]
+        return health
+
+    def get_battle_state(self):
+        battle_state = self.pyboy.memory[0xD057]
+        return battle_state
