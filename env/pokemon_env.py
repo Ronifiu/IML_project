@@ -1,7 +1,7 @@
 import gymnasium as gym
 from gymnasium import spaces
 from emulator.pyboy_wrapper import PyBoyWrapper
-from constants import Action
+from constants import Action, MAX_STEPS
 import numpy as np
 
 class PokemonEnv(gym.Env):
@@ -11,7 +11,7 @@ class PokemonEnv(gym.Env):
         self.debug = debug
         self.frame_skip = frame_skip
 
-        self.reward = 0
+        self.steps = 0
 
         self.action_space = spaces.Discrete(len(Action))
         self.observation_space = spaces.Box(
@@ -22,7 +22,10 @@ class PokemonEnv(gym.Env):
         )
 
     def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed)
+
         self.emulator.reset()
+        self.steps = 0
         obs = np.array(self.emulator.get_screen())
 
         return obs, {}
@@ -34,8 +37,9 @@ class PokemonEnv(gym.Env):
         obs = np.array(self.emulator.get_screen())
 
         reward = 0
+        self.steps += 1
         terminated = False
-        truncated = False
+        truncated = self.steps >= MAX_STEPS
         info = {}
 
         return obs, reward, terminated, truncated, info
@@ -46,3 +50,6 @@ class PokemonEnv(gym.Env):
 
     def close(self):
         self.emulator.close()
+
+    def get_observation(self):
+        return np.array(self.emulator.get_screen())

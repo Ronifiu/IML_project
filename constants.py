@@ -21,3 +21,5 @@ ACTION_MAP = {
     Action.START: "start",
     Action.SELECT: "select",
 }
+
+MAX_STEPS = 5000
