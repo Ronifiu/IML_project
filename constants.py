@@ -23,3 +23,8 @@ ACTION_MAP = {
 }
 
 MAX_STEPS = 5000
+
+class RewardConfig:
+    NEW_TILE = 1.0
+    NEW_MAP = 100.0
+    HP_LOSS = -5.0

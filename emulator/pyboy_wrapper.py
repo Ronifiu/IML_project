@@ -1,5 +1,6 @@
 from pyboy import PyBoy
 from constants import Action, ACTION_MAP
+from models.gamestate import GameState
 
 class PyBoyWrapper:
     def __init__(self, rom_path, debug=False, frame_skip=4):
@@ -8,6 +9,9 @@ class PyBoyWrapper:
         if not self.debug:
             self.pyboy.set_emulation_speed(0)
         self.frame_skip = frame_skip
+
+        self.previous_state = None
+        self.current_state = None
 
     def tick(self, frames=1):
         for _ in range(frames):
@@ -64,3 +68,18 @@ class PyBoyWrapper:
     def get_battle_state(self):
         battle_state = self.pyboy.memory[0xD057]
         return battle_state
+    
+    def get_player_direction(self):
+        player_direction = self.pyboy.memory[0xC109]
+        return player_direction
+    
+    def get_state(self):
+        player_x, player_y = self.get_player_position()
+        return GameState(
+            x=player_x,
+            y=player_y,
+            map_id=self.get_mapID(),
+            direction=self.get_player_direction(),
+            hp=self.get_current_health(),
+            in_battle=self.get_battle_state(),
+        )

@@ -1,1 +1,2 @@
 https://datacrystal.tcrf.net/wiki/Pok%C3%A9mon_Red_and_Blue/RAM_map
+https://medium.com/@samina.amin/deep-q-learning-dqn-71c109586bae
