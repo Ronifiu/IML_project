@@ -12,12 +12,12 @@ class GameState:
 
     def to_numpy(self):
         return np.array([
-            self.x,
-            self.y,
-            self.map_id,
-            self.direction,
-            self.hp,
-            self.in_battle,
+            self.x / 255.0,
+            self.y / 255.0,
+            self.map_id / 255.0,
+            self.direction / 3.0,
+            self.hp / 255.0,
+            float(self.in_battle),
         ], dtype=np.float32)
 
     @property

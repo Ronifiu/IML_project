@@ -3,19 +3,25 @@ from constants import Action, ACTION_MAP
 from models.gamestate import GameState
 
 class PyBoyWrapper:
-    def __init__(self, rom_path, debug=False, frame_skip=4):
+    def __init__(self, rom_path, debug=False, frame_skip=4, render=True):
         self.pyboy = PyBoy(rom_path)
         self.debug = debug
+        self.render = render
         if not self.debug:
             self.pyboy.set_emulation_speed(0)
+            print("Unlimited speed enabled")
+        else:
+            self.pyboy.set_emulation_speed(1)
+            print("Debug mode")
         self.frame_skip = frame_skip
 
-        self.previous_state = None
-        self.current_state = None
-
     def tick(self, frames=1):
-        for _ in range(frames):
-            self.pyboy.tick()
+        if self.debug:
+            for _ in range(frames):
+                self.pyboy.tick(1, render=self.render)
+        else:
+            self.pyboy.tick(frames, render=self.render)
+
 
     def get_screen(self):
         return self.pyboy.screen.image
@@ -28,15 +34,13 @@ class PyBoyWrapper:
             self.tick(self.frame_skip)
             return
         
-        self.pyboy.button_press(ACTION_MAP[action])
-        self.tick(2)
-        self.pyboy.button_release(ACTION_MAP[action])
-        self.tick(self.frame_skip - 2)
+        self.pyboy.button(ACTION_MAP[action])
+        self.tick()
+        self.tick(self.frame_skip)
 
     def step(self, action: Action):
         self.tap(action)
-        
-        return self.get_screen()
+
 
     def save_state(self, path):
         with open(path, 'wb') as f:
@@ -48,6 +52,7 @@ class PyBoyWrapper:
 
     def reset(self):
         self.load_state('saves/start.state')
+        self.tick(1)
     
     def close(self):
         self.pyboy.stop(save=False)
@@ -71,7 +76,7 @@ class PyBoyWrapper:
     
     def get_player_direction(self):
         player_direction = self.pyboy.memory[0xC109]
-        return player_direction
+        return player_direction / 4
     
     def get_state(self):
         player_x, player_y = self.get_player_position()
