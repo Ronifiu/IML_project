@@ -1,31 +1,5 @@
-from env.pokemon_env import PokemonEnv
-from constants import Action
+import numpy as np
 
-env = PokemonEnv("roms/Pokemon_Red.gb", debug=True, frame_skip=16)
+a = np.array([[1, 2], [12, 5]])
 
-env.reset()
-
-env.emulator.tick(60)
-env.step(Action.RIGHT)
-env.emulator.tick(60)
-env.step(Action.RIGHT)
-env.emulator.tick(60)
-env.step(Action.RIGHT)
-env.emulator.tick(60)
-print("hello")
-env.step(Action.RIGHT)
-env.emulator.tick(60)
-env.step(Action.LEFT)
-env.emulator.tick(60)
-env.step(Action.LEFT)
-env.emulator.tick(60)
-env.step(Action.LEFT)
-env.emulator.tick(60)
-env.step(Action.LEFT)
-env.emulator.tick(60)
-env.step(Action.LEFT)
-env.emulator.tick(60)
-
-
-env.reset()
-env.close()
+print(a.n)

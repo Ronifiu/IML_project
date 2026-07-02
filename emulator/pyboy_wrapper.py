@@ -1,10 +1,12 @@
 from pyboy import PyBoy
 from constants import Action, ACTION_MAP
 from models.gamestate import GameState
+import cv2
+
 
 class PyBoyWrapper:
-    def __init__(self, rom_path, debug=False, frame_skip=4, render=True):
-        self.pyboy = PyBoy(rom_path)
+    def __init__(self, rom_path, debug=False, frame_skip=24, render=True):
+        self.pyboy = PyBoy(rom_path, sound_emulated=False)
         self.debug = debug
         self.render = render
         if not self.debug:
@@ -24,19 +26,27 @@ class PyBoyWrapper:
 
 
     def get_screen(self):
-        return self.pyboy.screen.image
+        return self.pyboy.screen.ndarray
     
     def save_screen(self, path):
-        self.get_screen().save(path)
+            screen = self.get_screen()
+            screen_bgr = cv2.cvtColor(screen, cv2.COLOR_RGBA2BGR)
+            cv2.imwrite(path, screen_bgr)
     
     def tap(self, action: Action):
         if action == Action.NO_OP:
             self.tick(self.frame_skip)
             return
         
-        self.pyboy.button(ACTION_MAP[action])
-        self.tick()
-        self.tick(self.frame_skip)
+        press_event, release_event = ACTION_MAP[action]
+        
+        self.pyboy.send_input(press_event)
+        
+        self.tick(16)
+        
+        self.pyboy.send_input(release_event)
+
+        self.tick(self.frame_skip - 16)
 
     def step(self, action: Action):
         self.tap(action)
@@ -78,6 +88,9 @@ class PyBoyWrapper:
         player_direction = self.pyboy.memory[0xC109]
         return player_direction / 4
     
+    def get_pokemon_count(self):
+        return self.pyboy.memory[0xD163]
+    
     def get_state(self):
         player_x, player_y = self.get_player_position()
         return GameState(
@@ -87,4 +100,5 @@ class PyBoyWrapper:
             direction=self.get_player_direction(),
             hp=self.get_current_health(),
             in_battle=self.get_battle_state(),
+            pokemon_count=self.get_pokemon_count(),
         )

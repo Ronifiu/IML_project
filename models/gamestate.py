@@ -8,7 +8,8 @@ class GameState:
     map_id: int
     direction: int
     hp: int
-    in_battle: bool
+    in_battle: int
+    pokemon_count: int
 
     def to_numpy(self):
         return np.array([
@@ -18,6 +19,7 @@ class GameState:
             self.direction / 3.0,
             self.hp / 255.0,
             float(self.in_battle),
+            self.pokemon_count / 6.0,
         ], dtype=np.float32)
 
     @property
